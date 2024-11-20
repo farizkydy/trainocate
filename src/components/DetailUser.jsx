@@ -4,13 +4,13 @@ function DetailUser() {
   const {id} = useParams()
 
 
-  const [data, setDataUser] = useParams([
-    {
-      id: 1,
-      name: "Fariz",
-      gender: "Male"
-    }
-  ])
+  // const [data, setDataUser] = useParams([
+  //   {
+  //     id: 1,
+  //     name: "Fariz",
+  //     gender: "Male"
+  //   }
+  // ])
 
   // todo cari apakah id dari useParams ada atau tidak di dalam state daata
   return (
