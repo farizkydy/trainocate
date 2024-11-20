@@ -4,46 +4,35 @@ import { useState } from 'react';
 import Children from './children';
 
 function WelcomeMessage({isLoggedIn}) {
-  if (isLoggedIn) {
-    return <p>Welcome, User!</p>;
-  } else {
-    return <p>Please log in to continue.</p>;
-  }
+  
 }
 
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [nameObk, setNameObj] = useState([
-    {name: 'Fariz', age: 32},
-    {name: 'Rizky', age: 16},
-    {name: 'Rizaldy', age: 22}
-  ])
+  const [name, setName] = useState(" Mr.")
 
-  const userStatus = null;
-  const getStatusStyle = (statusbarStyle) => {
-    switch (statusbarStyle) {
-      case 'active':
-        return {color: 'green'};
-      case 'inactive':
-        return {color: 'red'};
-      default:
-        return {color: 'yellow'};
-    }
-  }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    alert(`Nama anda terdaftar sebagai ${name}`);
+  };
   return (
     <div className="App">
-      <WelcomeMessage isLoggedIn={false}/>
-      <h2>User Status</h2>
-      <p style={getStatusStyle(userStatus)}>Status: {userStatus}</p>
-      <p style={{color: 'blue'}}>Warna: {userStatus}</p>
-      <h1>Test</h1>
-      <button onClick={() => setCount(count + 1)}>+</button>
-      <p>{count}</p>
-
-      {nameObk.map((item, index) => (
-        <Children key={index} item={item}/>
-      ))}
+      <form onSubmit={handleSubmit}>
+        <label>
+          Gender:
+          <input type="radio" name="gender" value="male" />
+          Male  
+          <input type="radio" name="gender" value="female" />
+          Female
+        </label>
+        <label>
+          Name:
+          <input type="text" name="name" value={name} 
+          onChange={(e) => setName(e.target.value)}
+          />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
     </div>
   );
 }
