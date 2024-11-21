@@ -1,76 +1,68 @@
-import { useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 function Home() {
-  const [name, setName] = useState("")
-  const [gender, setGender] = useState("male")
-  const inputRef = useRef();
-  const [error, setError] = useState("")
-  const [dataUser, setDataUser] = useState([])
-  const [checkBox, setCheckBox] = useState(false);
+  const [dataPost, setDataPost] = useState([]);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [userId, setUserId] = useState(0);
+  const [loading, setLoading] = useState(true)
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (name.length < 3) {
-      setError('Please input minimal 3 characters')
-    } else if (!gender) {
-      setError('Please choose a gender')
-    } else {
-      setError('')
-      setName('')
-      setGender('male')
-      const newUser = {
-        name,
-        gender
-      }
-      setCheckBox(!checkBox)
-      setDataUser([...dataUser, newUser])
+  useEffect(() => {
+    fetchData()
+  }, []);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+      setLoading(false)
+      setDataPost(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } 
+  };
+
+  const addData = async (e) => {
+    e.preventDefault();
+    const payload = {
+        title: title,
+        body: body,
+        userId: userId,
+    }
+    try {
+      const response = await axios.post('https://jsonplaceholder.typicode.com/posts', payload);
+      setLoading(false)
+      setDataPost([...dataPost, response.data]);
+    } catch (error) {
     }
   };
+ 
   return (
     <div className="App">
-      <form onSubmit={handleSubmit}>
-        <label>
-          Gender:
-          <input type="radio" name="gender" value="male" 
-          onChange={(e) => setGender(e.target.value)}/>
-          Male  
-          <input type="radio" name="gender" value="female" 
-          onChange={(e) => setGender(e.target.value)}/>
-          Female
-        </label>
-        <label>
-          Name:
-          <input type="text" name="name" value={name} placeholder='Input Your Full name'
-          onChange={(e) => setName(e.target.value)}
-          />
-          {error && <p style={{color: 'red'}}>{error}</p>}
-        </label>
-        <label>
-          Terms of Service
-          <input type="checkbox" name="terms" value={checkBox} />
-          {checkBox ? "Agree" : "Not Agree"}
-        </label>
+      <form onSubmit={addData}>
+        <label for="userId">User Id</label>
+        <input type="number" id="userId" onChange={(e) => setUserId(e.target.value)}/>
+        <label for="title">Title</label>
+        <input type="text" id="title" onChange={(e) => setTitle(e.target.value)} />
+        <label for="body">Body</label>
+        <input type="text" id="body" onChange={(e) => setBody(e.target.value)} />
         <button type="submit">Submit</button>
       </form>
 
-      <h2>List Users</h2>
-      {dataUser.length > 0 ? (
+      <h2>List Posts</h2>
+      {dataPost.length > 0 ? (
         <table className="table">
           <thead>
             <tr>
               <th>No</th>
-              <th>Name</th>
-              <th>Gender</th>
+              <th>Title</th>
+              <th>Body</th>
             </tr>
           </thead>
           <tbody>
-            {dataUser.map((item, index) => (
+            {dataPost.map((item, index) => (
               <tr key={index}>
-                <Link key={index + 1} to={`/detail/${index + 1}`}>
                   <td>{index + 1}</td>
-                  <td>{item.name}</td>
-                  <td>{item.gender}</td>
-                </Link>
+                  <td>{item.title}</td>
+                  <td>{item.body}</td>
               </tr>
             ))}
           </tbody>
